@@ -1,12 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/yorikya/brain_cheating/circle"
+	"github.com/yorikya/brain_cheating/score"
 	"github.com/yorikya/brain_cheating/timeline"
 	"golang.org/x/image/colornames"
 )
@@ -18,9 +18,9 @@ func main() {
 
 func run() {
 	cfg := pixelgl.WindowConfig{
-		Title:  "Pixel Rocks!",
+		Title:  "Cheat The Brain",
 		Bounds: pixel.R(0, 0, 1024, 768),
-		// VSync:  true,
+		VSync:  true,
 	}
 	win, err := pixelgl.NewWindow(cfg)
 	if err != nil {
@@ -33,30 +33,39 @@ func run() {
 	//circle
 	circle := circle.NewCircle(100, 200)
 
+	//score
+	score := score.NewScore()
+
 	last := time.Now()
 	for !win.Closed() {
 		cam := pixel.IM.Moved(win.Bounds().Center().Sub(pixel.ZV))
 		win.SetMatrix(cam)
 
 		if win.JustPressed(pixelgl.MouseButtonLeft) {
-
-			mouse := cam.Unproject(win.MousePosition())
-			if circle.InRange(mouse) {
+			if circle.InRange(cam.Unproject(win.MousePosition())) {
 				circle.RandXY()
+				timeline.Reset()
+				score.IncSuccess()
 			}
-			fmt.Printf("%+v in range: %s\n", mouse, circle.InRange(mouse))
+			// fmt.Printf("%+v in range: %s\n", mouse, circle.InRange(mouse))
 		}
 
-		if time.Since(last) > time.Second {
-			// fmt.Println("Pass second")
-			timeline.Dec()
+		if time.Since(last) > 500*time.Millisecond {
+			if !timeline.Dec() {
+				circle.RandXY()
+				timeline.Reset()
+				score.IncFail()
+			}
 			last = time.Now()
 		}
 
-		win.Clear(colornames.Aliceblue)
+		win.Clear(colornames.Black)
+
 		circle.Draw(win)
 		timeline.Draw(win)
+		score.Draw(win)
+
 		win.Update()
-		time.Sleep(50 * time.Millisecond)
+		time.Sleep(40 * time.Millisecond)
 	}
 }

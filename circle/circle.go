@@ -24,23 +24,29 @@ func NewCircle(x, y float64) *Circle {
 	c := &Circle{
 		x:      x,
 		y:      y,
-		xRange: 100,
-		yRange: 200,
+		xRange: 800,
+		yRange: 600,
 		imd:    imd,
 		diam:   70,
 	}
-	c.SetXY(x, y)
+	c.UpdateXY()
 	return c
 }
 
 func (c *Circle) SetXY(x, y float64) {
+	c.x = x
+	c.y = y
+	c.UpdateXY()
+}
+
+func (c *Circle) UpdateXY() {
 	c.imd.Clear()
-	c.imd.Push(pixel.V(x, y))
+	c.imd.Push(pixel.V(c.x, c.y))
 	c.imd.Circle(c.diam, 0)
 }
 
 func (c *Circle) RandXY() {
-	c.SetXY(float64(rand.Intn(800)-400), float64(rand.Intn(700)-350))
+	c.SetXY(float64(rand.Intn(c.xRange)-c.xRange/2), float64(rand.Intn(c.yRange)-c.yRange/2))
 }
 func (c *Circle) InRange(v pixel.Vec) bool {
 	x, y := v.Sub(pixel.V(c.x, c.y)).XY()

@@ -20,7 +20,7 @@ func NewTimeLine() *TimeLine {
 		xEnd:    480,
 		yStart:  300,
 		yEnd:    0,
-		pxDelta: 40,
+		pxDelta: 100,
 		width:   30,
 		imd:     line,
 	}
@@ -31,7 +31,6 @@ func NewTimeLine() *TimeLine {
 
 func (t *TimeLine) Reset() {
 	t.SetXY(480, 480, 300, 0)
-	t.UpdateXY()
 }
 
 func (t *TimeLine) SetXY(xStart, xEnd, yStart, yEnd float64) {
@@ -39,6 +38,7 @@ func (t *TimeLine) SetXY(xStart, xEnd, yStart, yEnd float64) {
 	t.xEnd = xEnd
 	t.yStart = yStart
 	t.yEnd = yEnd
+	t.UpdateXY()
 }
 
 func (tm *TimeLine) Draw(t pixel.Target) {
