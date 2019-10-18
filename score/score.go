@@ -5,6 +5,7 @@ import (
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/text"
+	"golang.org/x/image/colornames"
 	"golang.org/x/image/font/basicfont"
 )
 
@@ -23,6 +24,11 @@ func NewScore() *Score {
 
 func (s *Score) Update() {
 	s.txt.Clear()
+	if s.success >= s.fail {
+		s.txt.Color = colornames.Green
+	} else {
+		s.txt.Color = colornames.Red
+	}
 	fmt.Fprintf(s.txt, "Score: %d, Fail: %d", s.success, s.fail)
 }
 
@@ -39,4 +45,3 @@ func (s *Score) IncFail() {
 	s.fail += 1
 	s.Update()
 }
-

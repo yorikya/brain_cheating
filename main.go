@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"time"
 
 	"github.com/faiface/pixel"
@@ -11,8 +12,10 @@ import (
 	"golang.org/x/image/colornames"
 )
 
-func main() {
+var delay = flag.Bool("delay", false, "Run with click delay")
 
+func main() {
+	flag.Parse()
 	pixelgl.Run(run)
 }
 
@@ -20,7 +23,7 @@ func run() {
 	cfg := pixelgl.WindowConfig{
 		Title:  "Cheat The Brain",
 		Bounds: pixel.R(0, 0, 1024, 768),
-		VSync:  true,
+		// VSync:  true,
 	}
 	win, err := pixelgl.NewWindow(cfg)
 	if err != nil {
@@ -43,6 +46,10 @@ func run() {
 
 		if win.JustPressed(pixelgl.MouseButtonLeft) {
 			if circle.InRange(cam.Unproject(win.MousePosition())) {
+				if *delay {
+					time.Sleep(100 * time.Millisecond)
+				}
+
 				circle.RandXY()
 				timeline.Reset()
 				score.IncSuccess()
@@ -50,7 +57,7 @@ func run() {
 			// fmt.Printf("%+v in range: %s\n", mouse, circle.InRange(mouse))
 		}
 
-		if time.Since(last) > 500*time.Millisecond {
+		if time.Since(last) > 300*time.Millisecond {
 			if !timeline.Dec() {
 				circle.RandXY()
 				timeline.Reset()
