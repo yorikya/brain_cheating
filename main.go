@@ -41,11 +41,14 @@ func run() {
 		if win.JustPressed(pixelgl.MouseButtonLeft) {
 
 			mouse := cam.Unproject(win.MousePosition())
+			if circle.InRange(mouse) {
+				circle.RandXY()
+			}
 			fmt.Printf("%+v in range: %s\n", mouse, circle.InRange(mouse))
 		}
 
 		if time.Since(last) > time.Second {
-			fmt.Println("Pass second")
+			// fmt.Println("Pass second")
 			timeline.Dec()
 			last = time.Now()
 		}
