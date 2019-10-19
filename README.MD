@@ -2,10 +2,10 @@
 This is simple 2D game based [pixel library](https://github.com/faiface/pixel) which cheat the brain clock.
 
 ## Rules: 
-You need click on circle before time is up, in left side you have a timeout clock for a click.
+You need click on the circle before time is up, in the left side you have a timeout clock for a click.
 
 ## Cheat the brain clock
-First start play with `-delay` flag for few rounds then after try to play without `-delay` flag, when you are running without delay you should fill like the circle disapere before you click.
+First start play with delay (click on `delay` button) what happen behind is you have a small delay from when you click on circle to time when circle is disapeare. After play without delay just click `start` button, in this mode circle disapeare right after click, as result when you are running delay game then you run regular game (`start`) in regular game you should fill like the circle disapere before you click on the circle, this way you are cheat the brain sync.
 
 ### Requirements 
 https://github.com/faiface/pixel#requirements

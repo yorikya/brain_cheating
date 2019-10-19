@@ -7,14 +7,13 @@ import (
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
+	"github.com/yorikya/brain_cheating/button"
 	"github.com/yorikya/brain_cheating/circle"
 	"github.com/yorikya/brain_cheating/score"
 	"github.com/yorikya/brain_cheating/timeline"
 	"github.com/yorikya/brain_cheating/wintext"
 	"golang.org/x/image/colornames"
 )
-
-var delay = flag.Bool("delay", false, "Run with click delay")
 
 func main() {
 	flag.Parse()
@@ -36,6 +35,36 @@ func EndGame(winner bool, score *score.Score, win *pixelgl.Window) {
 	time.Sleep(5 * time.Second)
 }
 
+func StartGame(win *pixelgl.Window) (withdelay bool) {
+	startbutton := button.NewButton("Start", -100, 0)
+	delaybutton := button.NewButton("Delay", 100, 0)
+
+	for !win.Closed() {
+		cam := pixel.IM.Moved(win.Bounds().Center().Sub(pixel.ZV))
+		win.SetMatrix(cam)
+
+		if win.JustPressed(pixelgl.MouseButtonLeft) {
+			if startbutton.Click(cam.Unproject(win.MousePosition())) {
+				withdelay = false
+				return
+			}
+
+			if delaybutton.Click(cam.Unproject(win.MousePosition())) {
+				withdelay = true
+				return
+			}
+		}
+
+		win.Clear(colornames.Black)
+
+		startbutton.Draw(win)
+		delaybutton.Draw(win)
+
+		win.Update()
+	}
+	return
+}
+
 func run() {
 	rand.Seed(time.Now().UnixNano())
 	cfg := pixelgl.WindowConfig{
@@ -48,10 +77,12 @@ func run() {
 		panic(err)
 	}
 
+Loop:
+	delay := StartGame(win)
 	timeline := timeline.NewTimeLine() //width
 	circle := circle.NewCircle(100, 200)
 	score := score.NewScore()
-	numMoves := 10
+	numMoves := 20
 
 	last := time.Now()
 	for !win.Closed() {
@@ -60,7 +91,7 @@ func run() {
 
 		if win.JustPressed(pixelgl.MouseButtonLeft) {
 			if circle.InRange(cam.Unproject(win.MousePosition())) {
-				if *delay {
+				if delay {
 					time.Sleep(100 * time.Millisecond)
 				}
 
@@ -68,7 +99,7 @@ func run() {
 				timeline.Reset()
 				if score.IncSuccess() == numMoves {
 					EndGame(true, score, win)
-					return
+					goto Loop
 				}
 			}
 		}
@@ -79,7 +110,7 @@ func run() {
 				timeline.Reset()
 				if score.IncFail() == numMoves {
 					EndGame(false, score, win)
-					return
+					goto Loop
 				}
 			}
 			last = time.Now()
