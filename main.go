@@ -36,8 +36,8 @@ func EndGame(winner bool, score *score.Score, win *pixelgl.Window) {
 }
 
 func StartGame(win *pixelgl.Window) (withdelay bool) {
-	startbutton := button.NewButton("Start", -100, 0)
-	delaybutton := button.NewButton("Delay", 100, 0)
+	startbutton := button.NewButton("Start", 100, 0)
+	delaybutton := button.NewButton("Delay", -100, 0)
 
 	for !win.Closed() {
 		cam := pixel.IM.Moved(win.Bounds().Center().Sub(pixel.ZV))
